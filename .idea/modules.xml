@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/TempDeathBanner.iml" filepath="$PROJECT_DIR$/TempDeathBanner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/tempDeathBanner.iml" filepath="$PROJECT_DIR$/tempDeathBanner.iml" />
+    </modules>
+  </component>
+</project>

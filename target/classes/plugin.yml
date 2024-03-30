@@ -1,0 +1,6 @@
+name: TempDeathBanner
+authors: [ flyingtaco725 ]
+description: simple hello world plugin
+version: '1'
+main: me.flyingtaco725.tempDeathBanner.TempDeathBanner
+api-version: '1.20'
