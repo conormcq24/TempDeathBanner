@@ -1,0 +1,26 @@
+# This variable chooses if you want incrementation
+# or a multiplier for your auto bans, false for increment, true for multiplier
+#
+# increment ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 3 hours etc
+# multiplier ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 4 hours etc
+incOrMulti: false
+
+# This is the length of your initial ban in milliseconds if incOrMulti is set to true its also how much
+# you will increment, for each death.
+#
+# ex: 3600000 milliseconds = 1 hour, first death will be 1 hour ban, second death will add 3600000
+#     (7200000) for a 2-hour ban
+increment: 3600000
+
+# This is the length of your initialban in milliseconds if incOrMulti is set to false.
+baseMulti: 3600000
+
+# This is how much the baseMulti will be multiplied by for each death.
+#
+# ex: 1st death (3600000 milliseconds/1 hour ban)
+# ex: 2nd death (3600000 * 2 = 7200000 milliseconds/2 hour ban)
+# ex: 3rd death (7200000 * 2 = 14400000 milliseconds/4 hour ban)
+multiplier: 2
+
+
+

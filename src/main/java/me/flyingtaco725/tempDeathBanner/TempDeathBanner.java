@@ -28,22 +28,34 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
 
     // List of player Info Objects
     public List<MCPlayer> PlayerBanList = new ArrayList<>();
-    // Amount of milliseconds player bans will increment by if increment is selected in config (amount will be set by user)
-    public int increment = 60000; //3600000 Default
-    // How much we will multiply last ban length by when multiplier is selected in config
-    public int multiplier = 2;
-    // initial ban length in milliseconds when multiply is selected in config (amount will be set by user)
-    public int baseMulti = 60000; //3600000 Default
-    // true for increment, false for multiply (option selected in config)
-    public boolean incOrMulti = false;
+    // Amount of milliseconds player bans will increment by if increment is selected in config (config var)
+    public int increment;
+    // How much we will multiply last ban length by when multiplier is selected (config var)
+    public int multiplier;
+    // initial ban length in milliseconds when multiply is selected in config (config var)
+    public int baseMulti;
+    // true for increment, false for multiply (config var)
+    public boolean incOrMulti;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override
     public void onEnable() {
+
+        // create config
+        saveDefaultConfig();
+
         // Register event listener
         getServer().getPluginManager().registerEvents(this, this);
+
+        // set increment value
+        increment = getConfig().getInt("increment");
+        multiplier = getConfig().getInt("multiplier");
+        baseMulti = getConfig().getInt("baseMulti");
+        incOrMulti = getConfig().getBoolean("incOrMulti");
+
         // Load player data from JSON file (if it exists)
         loadPlayerBanList();
+
     }
 
     // When server shuts down, save the array to persistent data
@@ -182,17 +194,8 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     /   how many times a player has died even after a server restart
     */
     private void savePlayerBanList() {
-
-        File dataFolder = getDataFolder();
-
-        // Create a folder named "TempDeathBanner" within the plugin's data folder
-        File tempDeathBannerFolder = new File(dataFolder, "TempDeathBanner");
-        if (!tempDeathBannerFolder.exists()) {
-            tempDeathBannerFolder.mkdirs(); // Creates directories including any missing parent directories
-        }
-
-        // Save the PlayerBanList to a file within the "TempDeathBanner" folder
-        File playerDataFile = new File(tempDeathBannerFolder, "player_data.json");
+        // Save the PlayerBanList to a file within the "plugins/TempDeathFolder" directory
+        File playerDataFile = new File(getDataFolder(), "player_data.json");
         try (Writer writer = new FileWriter(playerDataFile)) {
             // Convert the PlayerBanList to JSON string
             String json = gson.toJson(PlayerBanList);
@@ -209,15 +212,8 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     /   allowing us to preserve player death count and other information after server stops/restarts
     */
     private void loadPlayerBanList() {
-        File dataFolder = getDataFolder();
-        // Create a folder named "TempDeathBanner" within the plugin's data folder
-        File tempDeathBannerFolder = new File(dataFolder, "TempDeathBanner");
-        if (!tempDeathBannerFolder.exists()) {
-            return; // Folder doesn't exist, no data to load
-        }
-
-        // Load the PlayerBanList from a file within the "TempDeathBanner" folder
-        File playerDataFile = new File(tempDeathBannerFolder, "player_data.json");
+        // Load the PlayerBanList from a file within the "plugins/TempDeathFolder" directory
+        File playerDataFile = new File(getDataFolder(), "player_data.json");
         if (playerDataFile.exists()) {
             try (Reader reader = new FileReader(playerDataFile)) {
                 // Read JSON string from file
