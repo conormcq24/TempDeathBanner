@@ -36,6 +36,9 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     public int baseMulti;
     // true for increment, false for multiply (config var)
     public boolean incOrMulti;
+    // value of death broadcast message
+    public String messagePartOne;
+    public String messagePartTwo;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override
@@ -52,6 +55,8 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
         multiplier = getConfig().getInt("multiplier");
         baseMulti = getConfig().getInt("baseMulti");
         incOrMulti = getConfig().getBoolean("incOrMulti");
+        messagePartOne = getConfig().getString("messagePartOne");
+        messagePartTwo = getConfig().getString("messagePartTwo");
 
         // Load player data from JSON file (if it exists)
         loadPlayerBanList();
@@ -111,27 +116,59 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
                 int banLength = deathCalc(incOrMulti, player, multiplier);
 
                 // convert the banLength into a date time
-                Date banExpiration = convertBanLenthToDate(banLength);
+                Date banExpiration = convertBanLengthToExpDate(banLength);
+
+                // change millisecond time to a non-infuriating format to read
+                String banInWords = convertBanLengthToWords(banLength);
 
                 // Issue ban
                 BanList banList = Bukkit.getBanList(BanList.Type.NAME);
-                banList.addBan(player.getPlayerName(), "You were banned for your " + ordinal(player.getDeathCount()) + " death, Earning a ban time of " + banLength + " milliseconds", banExpiration, "Server");
-
+                banList.addBan(player.getPlayerName(), "You were banned for: " + banInWords, banExpiration, "Server");
 
                 // Kick Player
-                playerOBJ.kickPlayer("You were banned for your " + ordinal(player.getDeathCount()) + " death, Earning a ban time of " + banLength + " milliseconds");
+                playerOBJ.kickPlayer("For your " + ordinal(player.getDeathCount()) + " death, you have been banned for a length of " + banInWords);
 
                 // Broadcast the message
-                getServer().broadcastMessage(player.getPlayerName() + " has died for the " + ordinal(player.getDeathCount()) + " time");
+                getServer().broadcastMessage("§e[§lTempDeathBanner§l] §c" + player.getPlayerName() + "§a"+ messagePartOne + "§c§l" + ordinal(player.getDeathCount()) + "§l§a" + messagePartTwo);
+                getServer().broadcastMessage("§eBan Length: §l§c" + banInWords);
             }
         }
     }
 
     /*
+    /   This function takes the milliseconds of banLength and converts it into a sentence to be used in server broadcast
+    /   and ban messages.
+    */
+    public String convertBanLengthToWords(int banLength){
+        long days = banLength / (1000 * 60 * 60 * 24);
+        long hours = (banLength % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60);
+        long minutes = Math.round((double) (banLength % (1000 * 60 * 60)) / (1000 * 60));
+
+        // Build the string
+        StringBuilder stringBuilder = new StringBuilder();
+        if (days > 1) {
+            stringBuilder.append(days).append(" days ");
+        } else if (days == 1){
+            stringBuilder.append(days).append(" day ");
+        }
+        if (hours > 1) {
+            stringBuilder.append(hours).append(" hours ");
+        } else if (hours == 1){
+            stringBuilder.append(hours).append(" hour ");
+        }
+        if (minutes > 1) {
+            stringBuilder.append(minutes).append(" minutes");
+        } else if (minutes == 1){
+            stringBuilder.append(minutes).append(" minute");
+        }
+
+        return stringBuilder.toString();
+    }
+    /*
     /   This function takes the milliseconds of banLength and adds it to the current datetime, in order to formulate when a player should be unbanned
     /   it then returns that datetime to be used in the ban command
     */
-    public Date convertBanLenthToDate (int banLength)
+    public Date convertBanLengthToExpDate (int banLength)
     {
         long currentTimeMillis = System.currentTimeMillis();
         long futureTimeMillis = currentTimeMillis + banLength;

@@ -23,4 +23,12 @@ baseMulti: 3600000
 multiplier: 2
 
 
+# This is the message that will be broadcasted when a player dies
+# ex: Playername + just died for the + 1st + time, they have been banned for their weakness
+# ex: BAN TIME: 1 day 8 hours
+# playername
+messagePartOne: ' has died for the '
+# deathCount
+messagePartTwo: ' time, they have been banned for their weakness'
+#
 
