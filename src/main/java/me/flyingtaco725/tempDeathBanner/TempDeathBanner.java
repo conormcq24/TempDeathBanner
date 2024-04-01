@@ -7,6 +7,8 @@ import com.google.gson.reflect.TypeToken;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,6 +21,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.*;
 import java.lang.reflect.Type;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -44,6 +47,9 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     @Override
     public void onEnable() {
 
+        // Registering the commands with the "tbd" prefix and a space
+        getCommand("tbd").setExecutor(this);
+
         // create config
         saveDefaultConfig();
 
@@ -62,7 +68,60 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
         loadPlayerBanList();
 
     }
+    @Override
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
+        // Check if the command executed is 'tbd'
+        if (command.getName().equalsIgnoreCase("tbd")) {
+            // Check if the sender has permission to use the plugin
+            if (!sender.hasPermission("tempdeathbanner.use")) {
+                sender.sendMessage("You don't have permission to use this command.");
+                return true;
+            }
+
+            // Check if any arguments are provided
+            if (args.length == 0) {
+                sender.sendMessage("Usage: /tbd [resetdeaths|resetdeathsall]");
+                return true;
+            }
+
+            // Process the sub-commands
+            switch (args[0].toLowerCase()) {
+                case "resetdeaths":
+                    // Check if the sender has permission to reset deaths for a specific player
+                    if (!sender.hasPermission("tempdeathbanner.resetdeaths")) {
+                        sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to reset deaths for a specific player.");
+                        return true;
+                    }
+
+                    // Check if the player name argument is provided
+                    if (args.length < 2) {
+                        sender.sendMessage("Usage: /tbd resetdeaths <playerName>");
+                        return true;
+                    }
+
+                    // Call the function to reset deaths for a specific player
+                    resetDeaths(sender, args[1]);
+                    return true;
+
+                case "resetdeathsall":
+                    // Check if the sender has permission to reset deaths for all players
+                    if (!sender.hasPermission("tempdeathbanner.resetdeathsall")) {
+                        sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to reset deaths for all players.");
+                        return true;
+                    }
+
+                    // Call the function to reset deaths for all players
+                    resetDeathsAll(sender);
+                    return true;
+
+                default:
+                    sender.sendMessage("Usage: /tbd [resetdeaths|resetdeathsall]");
+                    return true;
+            }
+        }
+        return false;
+    }
     // When server shuts down, save the array to persistent data
     @Override
     public void onDisable() {
@@ -95,6 +154,49 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
         banHandler(event.getEntity());
     }
 
+    /*
+    /   this function verifies that the player is online before resetting a specific players
+    /   death counter
+    */
+    private void resetDeaths(CommandSender sender, String playerName){
+        // Get the player's UUID
+        Player player = Bukkit.getPlayer(playerName);
+
+        if (player != null){
+            // player exists and is online, get unique ID
+            UUID uuid = player.getUniqueId();
+            resetPlayerDeathCounter(player);
+            player.sendMessage("§e[§lTempDeathBanner§l] §c" + playerName + "'s §adeath count has been set back to §c0");
+        }
+        else
+        {
+            // Player is offline or does not exist
+            sender.sendMessage("§e[§lTempDeathBanner§l] §aPlayer with name §c" + playerName + " §ais offline or does not exist.");
+        }
+
+    }
+    /*
+    /   This function loops through the death tracking array and resets the death counter
+    /   for a specified player
+    */
+    private void resetPlayerDeathCounter(Player playerOBJ)
+    {
+        for (MCPlayer player : PlayerBanList) {
+            if (player.getPlayerUUID().equals(playerOBJ.getUniqueId())) {
+                player.setDeathCount(0);
+            }
+        }
+    }
+    /*
+    /   This function loops through the death tracking array and resets the death counter
+    /   for ALL players
+    */
+    private void resetDeathsAll(CommandSender sender){
+        for (MCPlayer player : PlayerBanList){
+            player.setDeathCount(0);
+        }
+        getServer().broadcastMessage("§e[§lTempDeathBanner§l] §cAll Players §ahave had their death count returned to §c0");
+    }
     /*
     /   This function handles everything involved in banning a player upon their death
     /   and handles inventory drops

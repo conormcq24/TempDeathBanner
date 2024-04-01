@@ -4,3 +4,30 @@ description: simple hello world plugin
 version: '1'
 main: me.flyingtaco725.tempDeathBanner.TempDeathBanner
 api-version: '1.20'
+
+commands:
+  tbd:
+    description: Temp Death Banner commands
+    usage: /<command> [resetdeaths|resetdeathsall]
+    aliases: [tempdeathbanner]
+    permission: tempdeathbanner.use
+    children:
+      resetdeaths:
+        description: Reset death count for a specific player
+        usage: /<command> resetdeaths <playerName>
+        permission: tempdeathbanner.resetdeaths
+      resetdeathsall:
+        description: Reset death count for all players
+        usage: /<command> resetdeathsall
+        permission: tempdeathbanner.resetdeathsall
+
+permissions:
+  tempdeathbanner.use:
+    description: Allows usage of Temp Death Banner commands
+    default: true
+  tempdeathbanner.resetdeaths:
+    description: Allows resetting death count for a specific player
+    default: op
+  tempdeathbanner.resetdeathsall:
+    description: Allows resetting death count for all players
+    default: op
