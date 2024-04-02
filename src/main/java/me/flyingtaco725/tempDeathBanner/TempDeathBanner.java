@@ -42,13 +42,15 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     // value of death broadcast message
     public String messagePartOne;
     public String messagePartTwo;
+    public int maxBanLength;
+    public int grace;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
 
     @Override
     public void onEnable() {
 
-        // Registering the commands with the "tbd" prefix and a space
-        getCommand("tbd").setExecutor(this);
+        // Registering the commands with the "tdb" prefix and a space
+        getCommand("tdb").setExecutor(this);
 
         // create config
         saveDefaultConfig();
@@ -63,6 +65,8 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
         incOrMulti = getConfig().getBoolean("incOrMulti");
         messagePartOne = getConfig().getString("messagePartOne");
         messagePartTwo = getConfig().getString("messagePartTwo");
+        maxBanLength = getConfig().getInt("maxBanLength");
+        grace = getConfig().getInt("grace");
 
         // Load player data from JSON file (if it exists)
         loadPlayerBanList();
@@ -71,8 +75,8 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 
-        // Check if the command executed is 'tbd'
-        if (command.getName().equalsIgnoreCase("tbd")) {
+        // Check if the command executed is 'tdb'
+        if (command.getName().equalsIgnoreCase("tdb")) {
             // Check if the sender has permission to use the plugin
             if (!sender.hasPermission("tempdeathbanner.use")) {
                 sender.sendMessage("You don't have permission to use this command.");
@@ -81,7 +85,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
 
             // Check if any arguments are provided
             if (args.length == 0) {
-                sender.sendMessage("Usage: /tbd [resetdeaths|resetdeathsall]");
+                sender.sendMessage("Usage: /tdb [resetdeaths|resetdeathsall]");
                 return true;
             }
 
@@ -96,7 +100,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
 
                     // Check if the player name argument is provided
                     if (args.length < 2) {
-                        sender.sendMessage("Usage: /tbd resetdeaths <playerName>");
+                        sender.sendMessage("Usage: /tdb resetdeaths <playerName>");
                         return true;
                     }
 
@@ -116,7 +120,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
                     return true;
 
                 default:
-                    sender.sendMessage("Usage: /tbd [resetdeaths|resetdeathsall]");
+                    sender.sendMessage("Usage: /tdb [resetdeaths|resetdeathsall]");
                     return true;
             }
         }
@@ -204,35 +208,45 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     private void banHandler(Player playerOBJ) {
         for (MCPlayer player : PlayerBanList) {
             if (player.getPlayerUUID().equals(playerOBJ.getUniqueId())) {
-
-                // acquire players inventory so we can force drop their items
-                Inventory inventory = playerOBJ.getInventory();
-
-                // the ban command im using causes keep inventory, so we must do this to force drop all the players items
-                inventory.clear();
-
                 // Increment death count
                 player.setDeathCount(player.getDeathCount() + 1);
 
                 // calculate ban time
                 int banLength = deathCalc(incOrMulti, player, multiplier);
 
-                // convert the banLength into a date time
-                Date banExpiration = convertBanLengthToExpDate(banLength);
+                // if banLength exceeds the maxBanLength simply set it to max ban length
+                if (maxBanLength != -1 && banLength > maxBanLength)
+                {
+                    banLength = maxBanLength;
+                }
 
-                // change millisecond time to a non-infuriating format to read
-                String banInWords = convertBanLengthToWords(banLength);
+                if (banLength != 0)
+                {
+                    // acquire players inventory so we can force drop their items
+                    Inventory inventory = playerOBJ.getInventory();
 
-                // Issue ban
-                BanList banList = Bukkit.getBanList(BanList.Type.NAME);
-                banList.addBan(player.getPlayerName(), "You were banned for: " + banInWords, banExpiration, "Server");
+                    // the ban command im using causes keep inventory, so we must do this to force drop all the players items
+                    inventory.clear();
 
-                // Kick Player
-                playerOBJ.kickPlayer("For your " + ordinal(player.getDeathCount()) + " death, you have been banned for a length of " + banInWords);
+                    // convert the banLength into a date time
+                    Date banExpiration = convertBanLengthToExpDate(banLength);
 
-                // Broadcast the message
-                getServer().broadcastMessage("§e[§lTempDeathBanner§l] §c" + player.getPlayerName() + "§a"+ messagePartOne + "§c§l" + ordinal(player.getDeathCount()) + "§l§a" + messagePartTwo);
-                getServer().broadcastMessage("§eBan Length: §l§c" + banInWords);
+                    // change millisecond time to a non-infuriating format to read
+                    String banInWords = convertBanLengthToWords(banLength);
+
+                    // Issue ban
+                    BanList banList = Bukkit.getBanList(BanList.Type.NAME);
+                    banList.addBan(player.getPlayerName(), "You were banned for: " + banInWords, banExpiration, "Server");
+
+                    // Kick Player
+                    playerOBJ.kickPlayer("For your " + ordinal(player.getDeathCount()) + " death, you have been banned for a length of " + banInWords);
+
+                    // Broadcast the message
+                    getServer().broadcastMessage("§e[§lTempDeathBanner§l] §c" + player.getPlayerName() + "§a"+ messagePartOne + "§c§l" + ordinal(player.getDeathCount()) + "§l§a" + messagePartTwo);
+                    getServer().broadcastMessage("§eBan Length: §l§c" + banInWords);
+                } else{
+                    getServer().broadcastMessage("§e[§lTempDeathBanner§l] §c" + player.getPlayerName() + "§a"+ " has died for the §c§l" + ordinal(player.getDeathCount()) + " §l§atime, they have §c§l" + (grace - player.getDeathCount()) + " §l§alives remaining until their first ban" );
+                }
             }
         }
     }
@@ -282,39 +296,65 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     /   This function performs the calculation to determine just how long a players ban should be in one of two ways
     /   depending on variables assigned via the plugins config file
     */
-    private int deathCalc(boolean incOrMulti, MCPlayer player, int multiplier)
-    {
+    private int deathCalc(boolean incOrMulti, MCPlayer player, int multiplier) {
+
         int banLength;
 
-        if (incOrMulti)
-        {
-            // increment
+        // if grace deaths == 0, no grace deaths, ban handler functions as normal
+        if (grace == 0) {
+            if (incOrMulti) {
+                // increment
 
-            // death 1: (1 * 3600000 = 3600000 milliseconds = 1 hour)
-            // death 2: (2 * 3600000 = 7200000 milliseconds = 2 hours)
-            // death 3: (3 * 3600000 = 10800000 milliseconds = 3 hours)
-            banLength = player.getDeathCount() * increment;
-            return banLength;
+                // all deaths for increment are handled the same
+                banLength = player.getDeathCount() * increment;
+                return banLength;
+            } else {
+                // multiply
+
+                if (player.getDeathCount() == 1) {
+                    // handle first death differently
+                    banLength = baseMulti;
+                    player.setLastMilli(banLength);
+                    return banLength;
+                } else {
+                    // handle all following deaths the same
+                    banLength = multiplier * player.getLastMilli();
+                    player.setLastMilli(banLength);
+                    return banLength;
+                }
+            }
         }
         else
         {
-            // multiply
-            if (player.getDeathCount() == 1)
-            {
-                // 1st Death and Later
-                // death 1: (baseMulti(3600000) = 3600000 milliseconds = 1 hour)
-                banLength = baseMulti;
-                player.setLastMilli(banLength);
-                return banLength;
+            if (grace >= player.getDeathCount()) {
+                // this is a free death
+                return 0;
             }
-            else
-            {
-                // 2nd Death and Later
-                // death 2: (multiplier(2) * lastMilli(3600000) = 7200000 milliseconds = 2 hours)
-                // death 3: (multiplier(2) * lastMilli(7200000) = 14400000 milliseconds = 4 hours)
-                banLength = multiplier * player.getLastMilli();
-                player.setLastMilli(banLength);
-                return banLength;
+            else {
+                int adjustedDeathCount = player.getDeathCount() - grace;
+                // this isn't a free death
+                if (incOrMulti) {
+                    // increment
+
+                    // all deaths for increment are handled the same
+                    banLength = adjustedDeathCount * increment;
+                    return banLength;
+                } else {
+                    // multiply
+                    if (player.getDeathCount() == grace + 1) {
+
+                        // handle first death differently
+                        banLength = baseMulti;
+                        player.setLastMilli(banLength);
+                        return banLength;
+                    } else {
+
+                        // handle all following deaths the same
+                        banLength = multiplier * player.getLastMilli();
+                        player.setLastMilli(banLength);
+                        return banLength;
+                    }
+                }
             }
         }
     }

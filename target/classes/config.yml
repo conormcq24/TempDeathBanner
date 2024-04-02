@@ -3,7 +3,7 @@
 #
 # increment ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 3 hours etc
 # multiplier ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 4 hours etc
-incOrMulti: false
+incOrMulti: true
 
 # This is the length of your initial ban in milliseconds if incOrMulti is set to true its also how much
 # you will increment, for each death.
@@ -24,6 +24,7 @@ multiplier: 2
 
 
 # This is the message that will be broadcasted when a player dies
+#
 # ex: Playername + just died for the + 1st + time, they have been banned for their weakness
 # ex: BAN TIME: 1 day 8 hours
 # playername
@@ -32,5 +33,21 @@ messagePartOne: ' has died for the '
 messagePartTwo: ' time, they have been banned for their weakness'
 
 
+# This is an option to set a certain amount of times a player can die
+# before bans start to take place
+#
+# grace: 2
+# ex: death 1: "thats a freebie, no ban"
+# ex: death 2: "thats a freebie, no ban"
+# ex: death 3: "player has died for the third time, ban length: 1 hour"
+grace: 0
 
+
+# This is an option to set a maximum ban length, this will be the maximum amount of milliseconds
+# somebody can be banned, set to -1 for no maximum length
+# maxBanLength = 7200000 (2 hours)
+# death 1: "player died for first time, ban length 1 hours"
+# death 2: "player died for the second time, ban length 2 hours"
+# death 3: "player died for the third time, ban length 2 hours" (maximum ban length was hit so they will never go higher)
+maxBanLength: -1
 

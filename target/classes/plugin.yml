@@ -6,7 +6,7 @@ main: me.flyingtaco725.tempDeathBanner.TempDeathBanner
 api-version: '1.20'
 
 commands:
-  tbd:
+  tdb:
     description: Temp Death Banner commands
     usage: /<command> [resetdeaths|resetdeathsall]
     aliases: [tempdeathbanner]
