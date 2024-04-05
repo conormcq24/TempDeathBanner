@@ -1,5 +1,6 @@
 package me.flyingtaco725.tempDeathBanner;
 
+import com.google.common.collect.Iterables;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
@@ -18,14 +19,12 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scoreboard.*;
 
 import java.io.*;
 import java.lang.reflect.Type;
 import java.net.URL;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 
 public final class TempDeathBanner extends JavaPlugin implements Listener {
 
@@ -44,8 +43,8 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     public String messagePartTwo;
     public int maxBanLength;
     public int grace;
+    public String scoreBoardTitle;
     private final Gson gson = new GsonBuilder().setPrettyPrinting().create();
-
     @Override
     public void onEnable() {
 
@@ -67,10 +66,10 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
         messagePartTwo = getConfig().getString("messagePartTwo");
         maxBanLength = getConfig().getInt("maxBanLength");
         grace = getConfig().getInt("grace");
+        scoreBoardTitle = getConfig().getString("scoreBoardTitle");
 
         // Load player data from JSON file (if it exists)
         loadPlayerBanList();
-
     }
     @Override
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
@@ -85,7 +84,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
 
             // Check if any arguments are provided
             if (args.length == 0) {
-                sender.sendMessage("Usage: /tdb [resetdeaths|resetdeathsall]");
+                sender.sendMessage("Usage: /tdb [resetdeaths|resetdeathsall|showdeathboard|closedeathboard]");
                 return true;
             }
 
@@ -119,6 +118,27 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
                     resetDeathsAll(sender);
                     return true;
 
+                case "showdeathboard":
+                    // show player the death board
+                    if (!sender.hasPermission("tempdeathbanner.showdeathboard")){
+                        sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to reset deaths for all players.");
+                        return true;
+                    }
+                    showDeathBoard(sender);
+                    sender.sendMessage("§e[§lTempDeathBanner§l] §aOpened the death board.");
+                    return true;
+
+                case "closedeathboard":
+                    // Close the player's death board
+                    if (!sender.hasPermission("tempdeathbanner.closedeathboard")){
+                        sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to reset deaths for all players.");
+                        return true;
+                    }
+                    Player player = (Player) sender;
+                    player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
+                    sender.sendMessage("§e[§lTempDeathBanner§l] §aClosed the death board.");
+                    return true;
+
                 default:
                     sender.sendMessage("Usage: /tdb [resetdeaths|resetdeathsall]");
                     return true;
@@ -126,6 +146,56 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
         }
         return false;
     }
+
+    public void showDeathBoard(CommandSender sender)
+    {
+        ScoreboardManager manager;
+        Scoreboard deathboard;
+        Objective objective;
+        Player p = (Player) sender;
+
+        // scoreboard create
+        manager = Bukkit.getScoreboardManager();
+        deathboard = manager.getNewScoreboard();
+        objective = deathboard.registerNewObjective("deathboard", "dummy", scoreBoardTitle);
+        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+
+        loadDeathBoard(manager, deathboard, objective, p);
+    }
+
+    public void loadDeathBoard(ScoreboardManager manager, Scoreboard deathboard, Objective objective, Player p){
+        // Sort the players based on death count and then by name if there's a tie
+        Collections.sort(PlayerBanList, new Comparator<MCPlayer>() {
+            @Override
+            public int compare(MCPlayer player1, MCPlayer player2) {
+                // Sort by death count in descending order
+                int deathCountComparison = Integer.compare(player2.getDeathCount(), player1.getDeathCount());
+
+                // If death counts are equal, sort by player name alphabetically
+                if (deathCountComparison == 0) {
+                    return player1.getPlayerName().compareToIgnoreCase(player2.getPlayerName());
+                }
+
+                return deathCountComparison;
+            }
+        });
+
+        // Take the first 5 players from the sorted list or less if there are fewer than 5 players
+        int numPlayers = Math.min(5, PlayerBanList.size());
+        for (int i = 0; i < numPlayers; i++) {
+            MCPlayer player = PlayerBanList.get(i);
+            String playerName = player.getPlayerName();
+            int deathCount = player.getDeathCount();
+
+            // Set the score for the player in the scoreboard
+            Score score = objective.getScore("§a" + playerName);
+            score.setScore(deathCount);
+        }
+
+        p.setScoreboard(deathboard);
+
+    }
+
     // When server shuts down, save the array to persistent data
     @Override
     public void onDisable() {
@@ -171,6 +241,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
             UUID uuid = player.getUniqueId();
             resetPlayerDeathCounter(player);
             player.sendMessage("§e[§lTempDeathBanner§l] §c" + playerName + "'s §adeath count has been set back to §c0");
+            savePlayerBanList();
         }
         else
         {
@@ -188,6 +259,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
         for (MCPlayer player : PlayerBanList) {
             if (player.getPlayerUUID().equals(playerOBJ.getUniqueId())) {
                 player.setDeathCount(0);
+                player.setLastMilli(0);
             }
         }
     }
@@ -198,7 +270,9 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     private void resetDeathsAll(CommandSender sender){
         for (MCPlayer player : PlayerBanList){
             player.setDeathCount(0);
+            player.setLastMilli(0);
         }
+        savePlayerBanList();
         getServer().broadcastMessage("§e[§lTempDeathBanner§l] §cAll Players §ahave had their death count returned to §c0");
     }
     /*
@@ -307,6 +381,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
 
                 // all deaths for increment are handled the same
                 banLength = player.getDeathCount() * increment;
+                savePlayerBanList();
                 return banLength;
             } else {
                 // multiply
@@ -315,11 +390,13 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
                     // handle first death differently
                     banLength = baseMulti;
                     player.setLastMilli(banLength);
+                    savePlayerBanList();
                     return banLength;
                 } else {
                     // handle all following deaths the same
                     banLength = multiplier * player.getLastMilli();
                     player.setLastMilli(banLength);
+                    savePlayerBanList();
                     return banLength;
                 }
             }
@@ -338,6 +415,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
 
                     // all deaths for increment are handled the same
                     banLength = adjustedDeathCount * increment;
+                    savePlayerBanList();
                     return banLength;
                 } else {
                     // multiply
@@ -346,12 +424,14 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
                         // handle first death differently
                         banLength = baseMulti;
                         player.setLastMilli(banLength);
+                        savePlayerBanList();
                         return banLength;
                     } else {
 
                         // handle all following deaths the same
                         banLength = multiplier * player.getLastMilli();
                         player.setLastMilli(banLength);
+                        savePlayerBanList();
                         return banLength;
                     }
                 }
@@ -380,9 +460,9 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
             String json = gson.toJson(PlayerBanList);
             // Write JSON string to file
             writer.write(json);
-            getLogger().info("Player data saved successfully.");
+            System.out.println("Player data saved successfully.");
         } catch (IOException e) {
-            getLogger().warning("Failed to save player data: " + e.getMessage());
+            System.out.println("Failed to save player data: " + e.getMessage());
         }
     }
 
@@ -401,10 +481,10 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
 
                 if (loadedList != null) {
                     PlayerBanList = loadedList;
-                    getLogger().info("Player data loaded successfully.");
+                    System.out.println("Player data loaded successfully.");
                 }
             } catch (IOException e) {
-                getLogger().warning("Failed to load player data: " + e.getMessage());
+                System.out.println("Failed to load player data: " + e.getMessage());
             }
         }
     }

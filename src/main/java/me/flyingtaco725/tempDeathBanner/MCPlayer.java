@@ -1,6 +1,8 @@
 package me.flyingtaco725.tempDeathBanner;
 import java.util.UUID;
 
+import static org.bukkit.Bukkit.getServer;
+
 public class MCPlayer {
     private String playerName;
     private UUID playerUUID;
@@ -42,6 +44,7 @@ public class MCPlayer {
 
     public void setLastMilli (int lastMilli){
         this.lastMilli = lastMilli;
+        getServer().broadcastMessage("" + lastMilli);
     }
 
     public int getLastMilli(){

@@ -1,9 +1,9 @@
 # This variable chooses if you want incrementation
-# or a multiplier for your auto bans, false for increment, true for multiplier
+# or a multiplier for your auto bans, false for multiplier, true for increment
 #
 # increment ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 3 hours etc
 # multiplier ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 4 hours etc
-incOrMulti: true
+incOrMulti: false
 
 # This is the length of your initial ban in milliseconds if incOrMulti is set to true its also how much
 # you will increment, for each death.
@@ -50,4 +50,8 @@ grace: 0
 # death 2: "player died for the second time, ban length 2 hours"
 # death 3: "player died for the third time, ban length 2 hours" (maximum ban length was hit so they will never go higher)
 maxBanLength: -1
+
+
+# This is how to set the scoreBoardTitle
+scoreBoardTitle: '§e§l[TDB] Death Leaders'
 
