@@ -39,8 +39,9 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
     // true for increment, false for multiply (config var)
     public boolean incOrMulti;
     // value of death broadcast message
-    public String messagePartOne;
-    public String messagePartTwo;
+    public String messageContainer;
+    public String banLengthContainer;
+    public String graceMessageContainer;
     public int maxBanLength;
     public int grace;
     public String scoreBoardTitle;
@@ -62,8 +63,9 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
         multiplier = getConfig().getInt("multiplier");
         baseMulti = getConfig().getInt("baseMulti");
         incOrMulti = getConfig().getBoolean("incOrMulti");
-        messagePartOne = getConfig().getString("messagePartOne");
-        messagePartTwo = getConfig().getString("messagePartTwo");
+        messageContainer = getConfig().getString("messageContainer");
+        banLengthContainer = getConfig().getString("banLengthContainer");
+        graceMessageContainer = getConfig().getString("graceMessageContainer");
         maxBanLength = getConfig().getInt("maxBanLength");
         grace = getConfig().getInt("grace");
         scoreBoardTitle = getConfig().getString("scoreBoardTitle");
@@ -315,16 +317,41 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
                     // Kick Player
                     playerOBJ.kickPlayer("For your " + ordinal(player.getDeathCount()) + " death, you have been banned for a length of " + banInWords);
 
-                    // Broadcast the message
-                    getServer().broadcastMessage("§e[§lTempDeathBanner§l] §c" + player.getPlayerName() + "§a"+ messagePartOne + "§c§l" + ordinal(player.getDeathCount()) + "§l§a" + messagePartTwo);
-                    getServer().broadcastMessage("§eBan Length: §l§c" + banInWords);
+                    // Broadcast the death notification message
+                    String gracesRemaining = "0";
+                    getServer().broadcastMessage(messageModifier(messageContainer, player.getPlayerName(), player.getDeathCount(), banInWords, gracesRemaining));
+                    getServer().broadcastMessage(messageModifier(banLengthContainer, player.getPlayerName(), player.getDeathCount(), banInWords, gracesRemaining));
                 } else{
-                    getServer().broadcastMessage("§e[§lTempDeathBanner§l] §c" + player.getPlayerName() + "§a"+ " has died for the §c§l" + ordinal(player.getDeathCount()) + " §l§atime, they have §c§l" + (grace - player.getDeathCount()) + " §l§alives remaining until their first ban" );
+                    // get amount of deaths remaining before a players ban
+                    String gracesRemaining = String.valueOf((grace - player.getDeathCount()));
+                    getServer().broadcastMessage(messageModifier(graceMessageContainer, player.getPlayerName(), player.getDeathCount(), "0 Seconds", gracesRemaining));
                 }
             }
         }
     }
 
+    /*
+    /   This function modifies the various broadcast
+    /   messages involved with the ban event
+     */
+    public String messageModifier(String messageContainer, String playerName, int playerDeathCount, String banInWords, String gracesRemaining) {
+        if(messageContainer.contains("[player]")) {
+            messageContainer = messageContainer.replace("[player]",  playerName);
+        }
+        if(messageContainer.contains("[dc]")) {
+            messageContainer = messageContainer.replace("[dc]", String.valueOf(playerDeathCount));
+        }
+        if(messageContainer.contains("[dcth]")) {
+            messageContainer = messageContainer.replace("[dcth]",  ordinal(playerDeathCount));
+        }
+        if(messageContainer.contains("[bl]")) {
+            messageContainer = messageContainer.replace("[bl]", banInWords);
+        }
+        if(messageContainer.contains("[gr]")) {
+            messageContainer = messageContainer.replace("[gr]", gracesRemaining);
+        }
+        return messageContainer;
+    };
     /*
     /   This function takes the milliseconds of banLength and converts it into a sentence to be used in server broadcast
     /   and ban messages.

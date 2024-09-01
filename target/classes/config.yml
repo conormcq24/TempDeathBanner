@@ -25,12 +25,19 @@ multiplier: 2
 
 # This is the message that will be broadcasted when a player dies
 #
-# ex: Playername + just died for the + 1st + time, they have been banned for their weakness
-# ex: BAN TIME: 1 day 8 hours
-# playername
-messagePartOne: ' has died for the '
-# deathCount
-messagePartTwo: ' time, they have been banned for their weakness'
+# messageContainer is the message that will be displayed to the server when someone dies and is banned
+# banLengthContainer is a message that will display under message container, in order to show the ban length
+# graceMessageContainer is the message that will be displayed when the user has grace lives remaining after dying (if grace is set to 0 in this config it will never display)
+#
+# type [player] to use the players name in the message
+# type [dc] to use the players death count in the message like (1,2 or 3)
+# type [dcth] to use players death count like (1st, 2nd, or 3rd)
+# type [bl] to use the amount of time they've been banned in words
+# type [gr] to use the amount of graces remaining for a player before they're banned (only use in graceMessageContainer)
+# minecraft color codes are supported, for color keys look here https://htmlcolorcodes.com/minecraft-color-codes/
+messageContainer: "§e[§lTempDeathBanner§l] §c[player]§a has died for the §c[dcth]§a time, they have been banned for their failure"
+graceMessageContainer: "§e[§lTempDeathBanner§l] §c[player]§a has died for the §c[dcth]§a time, they have §c[gr]§a deaths remaining before they'll be banned"
+banLengthContainer: "§e[§lBan Length]§l §c[bl]"
 
 
 # This is an option to set a certain amount of times a player can die
