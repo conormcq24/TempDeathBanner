@@ -123,7 +123,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
                 case "showdeathboard":
                     // show player the death board
                     if (!sender.hasPermission("tempdeathbanner.showdeathboard")){
-                        sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to reset deaths for all players.");
+                        sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to open death board.");
                         return true;
                     }
                     showDeathBoard(sender);
@@ -133,7 +133,7 @@ public final class TempDeathBanner extends JavaPlugin implements Listener {
                 case "closedeathboard":
                     // Close the player's death board
                     if (!sender.hasPermission("tempdeathbanner.closedeathboard")){
-                        sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to reset deaths for all players.");
+                        sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to close deathboard.");
                         return true;
                     }
                     Player player = (Player) sender;
