@@ -1,16 +1,17 @@
-package me.flyingtaco725.tempDeathBanner;
+package me.flyingtaco725.tempdeathbanner_revamped.PlayerInfo;
+
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.getServer;
 
-public class MCPlayer {
+public class PlayerInfo {
     private String playerName;
     private UUID playerUUID;
     private int deathCount;
     private int lastMilli;
 
 
-    public MCPlayer(String playerName, UUID playerUUID, int deathCount){
+    public PlayerInfo(String playerName, UUID playerUUID, int deathCount){
         this.playerName = playerName;
         this.playerUUID = playerUUID;
         this.deathCount = deathCount;
@@ -44,11 +45,9 @@ public class MCPlayer {
 
     public void setLastMilli (int lastMilli){
         this.lastMilli = lastMilli;
-        getServer().broadcastMessage("" + lastMilli);
     }
 
     public int getLastMilli(){
         return lastMilli;
     }
-
 }

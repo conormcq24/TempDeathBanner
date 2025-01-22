@@ -1,4 +1,8 @@
-me\flyingtaco725\tempDeathBanner\TempDeathBanner.class
-me\flyingtaco725\tempDeathBanner\MCPlayer.class
-me\flyingtaco725\tempDeathBanner\TempDeathBanner$2.class
-me\flyingtaco725\tempDeathBanner\TempDeathBanner$1.class
+me\flyingtaco725\tempdeathbanner_revamped\PlayerInfo\PlayerInfo.class
+me\flyingtaco725\tempdeathbanner_revamped\EventHandlers\PlayerDeathHandler.class
+me\flyingtaco725\tempdeathbanner_revamped\EventHandlers\PlayerJoinHandler.class
+me\flyingtaco725\tempdeathbanner_revamped\ListUtility\BanManager$1.class
+me\flyingtaco725\tempdeathbanner_revamped\ListUtility\BanManager.class
+me\flyingtaco725\tempdeathbanner_revamped\CommandHandlers\TdbCommandHandler$1.class
+me\flyingtaco725\tempdeathbanner_revamped\CommandHandlers\TdbCommandHandler.class
+me\flyingtaco725\tempdeathbanner_revamped\TempDeathBanner_Revamped.class

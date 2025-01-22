@@ -1,9 +1,7 @@
 name: TempDeathBanner
-authors: [ flyingtaco725 ]
-description: simple hello world plugin
 version: '${project.version}'
-main: me.flyingtaco725.tempDeathBanner.TempDeathBanner
-api-version: '1.20'
+main: me.flyingtaco725.tempdeathbanner_revamped.TempDeathBanner_Revamped
+api-version: '1.21'
 
 commands:
   tdb:
@@ -45,3 +43,4 @@ permissions:
   tempdeathbanner.closedeathboard:
     description: Allows closing death score board
     default: op
+

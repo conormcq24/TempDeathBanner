@@ -1,19 +1,25 @@
-# This variable chooses if you want incrementation
-# or a multiplier for your auto bans, false for multiplier, true for increment
-#
-# increment ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 3 hours etc
-# multiplier ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 4 hours etc
-incOrMulti: false
+#      NOTE: I RECOMMEND COMPLETELY RESETTING ALL DEATH COUNTS ANYTIME YOU MAKE A CHANGE
+#            TO THIS CONFIGURATION FILE, I HAVE FULLY TESTED ALL OPTIONS FROM A FRESH START
+#            BUT CANT PROMISE CHANGING SOMETHING WON'T BREAK PROGRAM LOGIC IF PEOPLE ALREADY HAVE
+#            DEATH COUNTS FROM A DIFFERENT CONFIGURATION SETUP
 
-# This is the length of your initial ban in milliseconds if incOrMulti is set to true its also how much
-# you will increment, for each death.
+
+# This variable chooses if you want incrementation
+# or a multiplier for your auto bans, false for multiplier, true for increment.
+#
+# increment ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 3 hours etc.
+# multiplier ex: 1st death banned 1 hour, 2nd death banned 2 hours, 3rd death banned 4 hours etc.
+incOrMultiply: false
+
+# This is the length of your initial ban in milliseconds if incOrMultiply is set to true (increment)
+# its also how many milliseconds will be added each ban.
 #
 # ex: 3600000 milliseconds = 1 hour, first death will be 1 hour ban, second death will add 3600000
 #     (7200000) for a 2-hour ban
-increment: 3600000
+incrementByXMilliseconds: 3600000
 
-# This is the length of your initialban in milliseconds if incOrMulti is set to false.
-baseMulti: 3600000
+# This is the length of your initial ban in milliseconds if incOrMultiply is set to false (multiply).
+initialBanLength: 3600000
 
 # This is how much the baseMulti will be multiplied by for each death.
 #
@@ -40,14 +46,14 @@ graceMessageContainer: "§e[§lTempDeathBanner§l] §c[player]§a has died for t
 banLengthContainer: "§e[§lBan Length]§l §c[bl]"
 
 
-# This is an option to set a certain amount of times a player can die
-# before bans start to take place
+# This number represents the amount of times a player can die before they start to receive
+# penalties for their deaths, set to 0 for no grace lives
 #
 # grace: 2
 # ex: death 1: "thats a freebie, no ban"
 # ex: death 2: "thats a freebie, no ban"
 # ex: death 3: "player has died for the third time, ban length: 1 hour"
-grace: 0
+graceLives: 0
 
 
 # This is an option to set a maximum ban length, this will be the maximum amount of milliseconds
@@ -56,9 +62,9 @@ grace: 0
 # death 1: "player died for first time, ban length 1 hours"
 # death 2: "player died for the second time, ban length 2 hours"
 # death 3: "player died for the third time, ban length 2 hours" (maximum ban length was hit so they will never go higher)
-maxBanLength: -1
+maximumBanLength: -1
 
 
 # This is how to set the scoreBoardTitle
-scoreBoardTitle: '§e§l[TDB] Death Leaders'
+scoreboardTitle: '§e§l[TDB] Death Leaders'
 
