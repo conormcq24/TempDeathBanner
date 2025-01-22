@@ -1,7 +1,7 @@
-package me.flyingtaco725.tempdeathbanner_revamped.CommandHandlers;
+package me.flyingtaco725.tempDeathBanner.CommandHandlers;
 
-import me.flyingtaco725.tempdeathbanner_revamped.PlayerInfo.PlayerInfo;
-import me.flyingtaco725.tempdeathbanner_revamped.TempDeathBanner_Revamped;
+import me.flyingtaco725.tempDeathBanner.PlayerInfo.PlayerInfo;
+import me.flyingtaco725.tempDeathBanner.tempDeathBanner;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -13,9 +13,9 @@ import java.util.Comparator;
 import java.util.UUID;
 
 public class TdbCommandHandler {
-    private final TempDeathBanner_Revamped plugin;
+    private final tempDeathBanner plugin;
 
-    public TdbCommandHandler(TempDeathBanner_Revamped plugin) {
+    public TdbCommandHandler(tempDeathBanner plugin) {
         this.plugin = plugin;
     }
 

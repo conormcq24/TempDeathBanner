@@ -5,11 +5,11 @@
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>me.flyingtaco725</groupId>
-  <artifactId>TempDeathBanner_Revamped</artifactId>
+  <artifactId>tempDeathBanner</artifactId>
   <version>1.0-SNAPSHOT</version>
   <packaging>jar</packaging>
 
-  <name>TempDeathBanner_Revamped</name>
+  <name>tempDeathBanner</name>
 
   <properties>
     <java.version>1.8</java.version>

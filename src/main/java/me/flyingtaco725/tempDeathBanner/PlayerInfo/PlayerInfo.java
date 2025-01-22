@@ -1,8 +1,6 @@
-package me.flyingtaco725.tempdeathbanner_revamped.PlayerInfo;
+package me.flyingtaco725.tempDeathBanner.PlayerInfo;
 
 import java.util.UUID;
-
-import static org.bukkit.Bukkit.getServer;
 
 public class PlayerInfo {
     private String playerName;

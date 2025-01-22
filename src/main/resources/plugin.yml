@@ -1,6 +1,6 @@
 name: TempDeathBanner
 version: '${project.version}'
-main: me.flyingtaco725.tempdeathbanner_revamped.TempDeathBanner_Revamped
+main: me.flyingtaco725.tempDeathBanner.tempDeathBanner
 api-version: '1.21'
 
 commands:

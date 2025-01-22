@@ -1,7 +1,7 @@
-package me.flyingtaco725.tempdeathbanner_revamped.EventHandlers;
+package me.flyingtaco725.tempDeathBanner.EventHandlers;
 
-import me.flyingtaco725.tempdeathbanner_revamped.PlayerInfo.PlayerInfo;
-import me.flyingtaco725.tempdeathbanner_revamped.TempDeathBanner_Revamped;
+import me.flyingtaco725.tempDeathBanner.PlayerInfo.PlayerInfo;
+import me.flyingtaco725.tempDeathBanner.tempDeathBanner;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -9,13 +9,12 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import java.util.UUID;
 
 import static org.bukkit.Bukkit.getLogger;
-import static org.bukkit.Bukkit.getServer;
 
 /* This Class detects player join events and handles them */
 public class PlayerJoinHandler implements Listener {
-    private final TempDeathBanner_Revamped plugin;
+    private final tempDeathBanner plugin;
 
-    public PlayerJoinHandler(TempDeathBanner_Revamped plugin) {
+    public PlayerJoinHandler(tempDeathBanner plugin) {
         this.plugin = plugin;
     }
 

@@ -1,9 +1,9 @@
-package me.flyingtaco725.tempdeathbanner_revamped.ListUtility;
+package me.flyingtaco725.tempDeathBanner.ListUtility;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import me.flyingtaco725.tempdeathbanner_revamped.PlayerInfo.PlayerInfo;
+import me.flyingtaco725.tempDeathBanner.PlayerInfo.PlayerInfo;
 
 import java.io.*;
 import java.lang.reflect.Type;

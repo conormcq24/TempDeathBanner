@@ -1,7 +1,7 @@
-package me.flyingtaco725.tempdeathbanner_revamped.EventHandlers;
+package me.flyingtaco725.tempDeathBanner.EventHandlers;
 
-import me.flyingtaco725.tempdeathbanner_revamped.PlayerInfo.PlayerInfo;
-import me.flyingtaco725.tempdeathbanner_revamped.TempDeathBanner_Revamped;
+import me.flyingtaco725.tempDeathBanner.PlayerInfo.PlayerInfo;
+import me.flyingtaco725.tempDeathBanner.tempDeathBanner;
 import org.bukkit.BanList;
 import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
@@ -17,8 +17,8 @@ import static org.bukkit.Bukkit.getServer;
 
 /* This Class detects player death events and handles them */
 public class PlayerDeathHandler implements Listener {
-        private final TempDeathBanner_Revamped plugin;
-        public PlayerDeathHandler(TempDeathBanner_Revamped plugin) {
+        private final tempDeathBanner plugin;
+        public PlayerDeathHandler(tempDeathBanner plugin) {
             this.plugin= plugin;
         }
 

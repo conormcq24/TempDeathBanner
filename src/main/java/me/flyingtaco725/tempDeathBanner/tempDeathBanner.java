@@ -1,22 +1,17 @@
-package me.flyingtaco725.tempdeathbanner_revamped;
+package me.flyingtaco725.tempDeathBanner;
 
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.reflect.TypeToken;
-import me.flyingtaco725.tempdeathbanner_revamped.CommandHandlers.TdbCommandHandler;
-import me.flyingtaco725.tempdeathbanner_revamped.EventHandlers.PlayerDeathHandler;
-import me.flyingtaco725.tempdeathbanner_revamped.EventHandlers.PlayerJoinHandler;
-import me.flyingtaco725.tempdeathbanner_revamped.ListUtility.BanManager;
-import me.flyingtaco725.tempdeathbanner_revamped.PlayerInfo.PlayerInfo;
+import me.flyingtaco725.tempDeathBanner.CommandHandlers.TdbCommandHandler;
+import me.flyingtaco725.tempDeathBanner.EventHandlers.PlayerDeathHandler;
+import me.flyingtaco725.tempDeathBanner.EventHandlers.PlayerJoinHandler;
+import me.flyingtaco725.tempDeathBanner.ListUtility.BanManager;
+import me.flyingtaco725.tempDeathBanner.PlayerInfo.PlayerInfo;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.plugin.java.JavaPlugin;
 import java.io.*;
-import java.lang.reflect.Type;
-import java.net.URL;
 import java.util.*;
 
-public final class TempDeathBanner_Revamped extends JavaPlugin {
+public final class tempDeathBanner extends JavaPlugin {
 
     /*
         banManagementList is the list which tracks all player deaths and their penalties
