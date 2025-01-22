@@ -126,7 +126,10 @@ public class TdbCommandHandler {
         plugin.banManager.saveList(plugin.playerDataFile, plugin.banManagementList);
         plugin.getServer().broadcastMessage("§e[§lTempDeathBanner§l] §cAll Players §ahave had their death count returned to §c0");
     }
-
+    /*
+        FUNCTION: showDeathBoard()
+        PURPOSE: shows a scoreboard of player deaths to the user
+     */
     public void showDeathBoard(CommandSender sender)
     {
         ScoreboardManager manager;
@@ -143,6 +146,10 @@ public class TdbCommandHandler {
         loadDeathBoard(manager, deathboard, objective, p);
     }
 
+    /*
+        FUNCTION: loadDeathBoard()
+        PURPOSE: responsible for loading the data for the showDeathBoard command
+     */
     public void loadDeathBoard(ScoreboardManager manager, Scoreboard deathboard, Objective objective, Player p){
         // Sort the players based on death count and then by name if there's a tie
         Collections.sort(plugin.banManagementList, new Comparator<PlayerInfo>() {

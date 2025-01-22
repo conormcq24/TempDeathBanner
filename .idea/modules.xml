@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/TempDeathBanner.iml" filepath="$PROJECT_DIR$/TempDeathBanner.iml" />
+      <module fileurl="file://$PROJECT_DIR$/TempDeathBanner_Revamped.iml" filepath="$PROJECT_DIR$/TempDeathBanner_Revamped.iml" />
     </modules>
   </component>
 </project>
