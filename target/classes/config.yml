@@ -68,3 +68,9 @@ maximumBanLength: -1
 # This is how to set the scoreBoardTitle
 scoreboardTitle: '§e§l[TDB] Death Leaders'
 
+# permanentDeathBoard makes it so that the players visibility is not affected by log off when set to true
+# for example, when set to false. if the player uses the command /showDeathBoard so that they can see their death
+# board and logs off and back on their deathboard will no longer be visible upon rejoining.
+# when set to true, if the player uses /showdeathboard and logs off and back on their deathboard will still be visible
+# essentially permanentdeathboard means that the players board visibility is not effected by logging on and off
+permanentDeathBoard: false

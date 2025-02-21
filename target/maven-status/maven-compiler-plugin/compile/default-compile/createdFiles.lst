@@ -5,4 +5,4 @@ me\flyingtaco725\tempDeathBanner\ListUtility\BanManager.class
 me\flyingtaco725\tempDeathBanner\PlayerInfo\PlayerInfo.class
 me\flyingtaco725\tempDeathBanner\EventHandlers\PlayerDeathHandler.class
 me\flyingtaco725\tempDeathBanner\EventHandlers\PlayerJoinHandler.class
-me\flyingtaco725\tempDeathBanner\CommandHandlers\TdbCommandHandler$1.class
+me\flyingtaco725\tempDeathBanner\ListUtility\DeathBoardUtils.class

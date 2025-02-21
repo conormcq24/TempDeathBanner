@@ -36,6 +36,7 @@ public final class tempDeathBanner extends JavaPlugin {
     public int graceLives;
     public int maximumBanLength;
     public String scoreboardTitle;
+    public Boolean permanentDeathBoard;
 
     // this is the class to handle commands
     public TdbCommandHandler commandHandler;
@@ -65,6 +66,7 @@ public final class tempDeathBanner extends JavaPlugin {
         graceLives = getConfig().getInt("graceLives");
         maximumBanLength = getConfig().getInt("maximumBanLength");
         scoreboardTitle = getConfig().getString("scoreboardTitle");
+        permanentDeathBoard = getConfig().getBoolean("permanentDeathBoard");
 
         // pull persistent json file into banManagementList
         banManagementList = banManager.loadList(playerDataFile);

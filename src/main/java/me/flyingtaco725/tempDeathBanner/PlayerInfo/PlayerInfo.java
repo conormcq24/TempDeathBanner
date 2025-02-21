@@ -7,12 +7,14 @@ public class PlayerInfo {
     private UUID playerUUID;
     private int deathCount;
     private int lastMilli;
+    private boolean deathBoardVisibility;
 
 
     public PlayerInfo(String playerName, UUID playerUUID, int deathCount){
         this.playerName = playerName;
         this.playerUUID = playerUUID;
         this.deathCount = deathCount;
+        this.deathBoardVisibility = false;
         // remember to set this to config variable later
         this.lastMilli = 0;
     }
@@ -48,4 +50,7 @@ public class PlayerInfo {
     public int getLastMilli(){
         return lastMilli;
     }
+
+    public void setDeathboardVisibility (boolean deathBoardVisiblity) {this.deathBoardVisibility = deathBoardVisiblity; }
+    public boolean getDeathBoardVisibility() { return deathBoardVisibility; }
 }

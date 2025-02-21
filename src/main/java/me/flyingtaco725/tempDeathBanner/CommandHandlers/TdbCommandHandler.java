@@ -2,6 +2,7 @@ package me.flyingtaco725.tempDeathBanner.CommandHandlers;
 
 import me.flyingtaco725.tempDeathBanner.PlayerInfo.PlayerInfo;
 import me.flyingtaco725.tempDeathBanner.tempDeathBanner;
+import me.flyingtaco725.tempDeathBanner.ListUtility.DeathBoardUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -14,9 +15,11 @@ import java.util.UUID;
 
 public class TdbCommandHandler {
     private final tempDeathBanner plugin;
+    private final DeathBoardUtils deathBoardUtils;
 
     public TdbCommandHandler(tempDeathBanner plugin) {
         this.plugin = plugin;
+        this.deathBoardUtils = new DeathBoardUtils(plugin);
     }
 
     /*
@@ -34,6 +37,7 @@ public class TdbCommandHandler {
                 sender.sendMessage("Usage: /tdb [resetdeaths|resetdeathsall|showdeathboard|closedeathboard]");
                 return true;
             }
+            Player player = (Player) sender;
             switch(args[0].toLowerCase()) {
                 case "resetdeaths":
                     if(!sender.hasPermission("tempdeathbanner.resetdeaths")){
@@ -61,7 +65,8 @@ public class TdbCommandHandler {
                         sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to open death board.");
                         return true;
                     }
-                    showDeathBoard(sender);
+                    deathBoardUtils.showDeathBoard(player);
+                    deathBoardUtils.setPlayerDeathBoardVisibility(player, true);
                     sender.sendMessage("§e[§lTempDeathBanner§l] §aOpened the death board.");
                     return true;
 
@@ -71,7 +76,7 @@ public class TdbCommandHandler {
                         sender.sendMessage("§e[§lTempDeathBanner§l] §cYou don't have permission to close deathboard.");
                         return true;
                     }
-                    Player player = (Player) sender;
+                    deathBoardUtils.setPlayerDeathBoardVisibility(player, false);
                     player.setScoreboard(Bukkit.getScoreboardManager().getMainScoreboard());
                     sender.sendMessage("§e[§lTempDeathBanner§l] §aClosed the death board.");
                     return true;
@@ -125,61 +130,5 @@ public class TdbCommandHandler {
         }
         plugin.banManager.saveList(plugin.playerDataFile, plugin.banManagementList);
         plugin.getServer().broadcastMessage("§e[§lTempDeathBanner§l] §cAll Players §ahave had their death count returned to §c0");
-    }
-    /*
-        FUNCTION: showDeathBoard()
-        PURPOSE: shows a scoreboard of player deaths to the user
-     */
-    public void showDeathBoard(CommandSender sender)
-    {
-        ScoreboardManager manager;
-        Scoreboard deathboard;
-        Objective objective;
-        Player p = (Player) sender;
-
-        // scoreboard create
-        manager = Bukkit.getScoreboardManager();
-        deathboard = manager.getNewScoreboard();
-        objective = deathboard.registerNewObjective("deathboard", "dummy", plugin.scoreboardTitle);
-        objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-
-        loadDeathBoard(manager, deathboard, objective, p);
-    }
-
-    /*
-        FUNCTION: loadDeathBoard()
-        PURPOSE: responsible for loading the data for the showDeathBoard command
-     */
-    public void loadDeathBoard(ScoreboardManager manager, Scoreboard deathboard, Objective objective, Player p){
-        // Sort the players based on death count and then by name if there's a tie
-        Collections.sort(plugin.banManagementList, new Comparator<PlayerInfo>() {
-            @Override
-            public int compare(PlayerInfo player1, PlayerInfo player2) {
-                // Sort by death count in descending order
-                int deathCountComparison = Integer.compare(player2.getDeathCount(), player1.getDeathCount());
-
-                // If death counts are equal, sort by player name alphabetically
-                if (deathCountComparison == 0) {
-                    return player1.getPlayerName().compareToIgnoreCase(player2.getPlayerName());
-                }
-
-                return deathCountComparison;
-            }
-        });
-
-        // Take the first 5 players from the sorted list or less if there are fewer than 5 players
-        int numPlayers = Math.min(5, plugin.banManagementList.size());
-        for (int i = 0; i < numPlayers; i++) {
-            PlayerInfo player = plugin.banManagementList.get(i);
-            String playerName = player.getPlayerName();
-            int deathCount = player.getDeathCount();
-
-            // Set the score for the player in the scoreboard
-            Score score = objective.getScore("§a" + playerName);
-            score.setScore(deathCount);
-        }
-
-        p.setScoreboard(deathboard);
-
     }
 }
